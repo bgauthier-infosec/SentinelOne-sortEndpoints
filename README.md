@@ -6,7 +6,7 @@ Expected use case:
 - Move all endpoints landing in the fallback (default) site their destination site based on naming convention.
 
 # Environment setup
-## Install dependancies
+## Install dependencies
 ```bash
 python -m pip install -r requirements.txt
 ```
