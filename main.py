@@ -21,13 +21,14 @@ SITE_PATTERN_MATCHING = {
     'Italy': ['(?i)^(C|S|V)IT.+'],
     'Nordic': [],
     'Poland': ['(?i)^(C|S|V)PL.+'],
-    'Shared Services': [],
+    'Shared Services': ['(?i)^AZ.+'],
     'South Africa': ['(?i)^(C|S|V)ZA.+'],
     'Spain & Portugal': ['(?i)^(C|S|V)ES.+'],
     'United Arabic Emirates': [],
     'United Kingdom': ['(?i)^(C|S|V)(GB|UK).+'],
     'Switzerland': ['(?i)^(C|S|V)CH.+'],
-    'Default site': []
+    'Default site': [],
+    'Camlog - Medentis': []
 }
 
 authHeaders = { 'Authorization': f'ApiToken {API_TOKEN}'}
@@ -39,27 +40,32 @@ def writeJsonToFile(text):
     with open('debugOutput.json', 'w') as f:
         f.write(json.dumps(json.loads(text), indent=2))
 
-def moveEndpoint(endpoint, siteIDs) -> bool:
+def moveEndpoints(toBeMovedEndpoints):
+    for site, endpoints in toBeMovedEndpoints.items():
+        if len(endpoints) <= 0:
+            continue # Skip this site if endpoint list is empty
+        postData = {
+            'data': {
+                'targetSiteId': siteIDs[site]
+            },
+            'filter': {
+                'ids': [id for name, id in endpoints]
+            }
+        }
+        postMoveAgentResponse = requests.post(CONSOLE_URL + MOVE_SITE_URL, headers=authHeaders, json=postData)
+        if postMoveAgentResponse.status_code != 200:
+            print(f'❌ ERROR: failed attempt to move agent. Status code is {postMoveAgentResponse.status_code}\nResponse:\n{postMoveAgentResponse.text}')
+            exit()
+        print(f"✅ {site} -> {len(endpoints)} agent{'s' if len(endpoints) > 1 else ''}")
+
+def classifyEndpoint(endpoint, toBeMovedEndpoints):
     for site, patterns in SITE_PATTERN_MATCHING.items():
         if any([re.match(pattern, endpoint['computerName']) for pattern in patterns]):
-            # Endpoint's name match a pattern for the given site
-            postData = {
-                'data': {
-                    'targetSiteId': siteIDs[site]
-                },
-                'filter': {
-                    'ids': [
-                        endpoint['id']
-                    ]
-                }
-            }
-            postMoveAgentResponse = requests.post(CONSOLE_URL + MOVE_SITE_URL, headers=authHeaders, json=postData)
-            if postMoveAgentResponse.status_code != 200:
-                print(f'❌ ERROR: failed attempt to move agent. Status code is {postMoveAgentResponse.status_code}\nResponse:\n{postMoveAgentResponse.text}')
-                exit()
-            print(f"✅ {endpoint['computerName']} -> {site}")
+            toBeMovedEndpoints[site].append((endpoint['computerName'], endpoint['id']))
             return
     print(f"❗ Endpoint {endpoint['computerName']} did not match any patterns from SITE_PATTERN_MATCHING object. No action was performed.")
+
+
 
 def getSiteIDs():
     getSitesResponse = requests.get(CONSOLE_URL + GET_SITES_URL, headers=authHeaders, params={'availableMoveSites': True, 'limit': 1000})
@@ -95,10 +101,27 @@ if getAgentResponse.status_code != 200:
     exit()
 
 getAgentJsonData = json.loads(getAgentResponse.text)
+
+toBeMovedEndpoints = {key: [] for key in siteIDs.keys()}
 for endpoint in getAgentJsonData["data"]:
-    moveEndpoint(endpoint, siteIDs)
+    classifyEndpoint(endpoint, toBeMovedEndpoints)
 
+print(f"=========================\nAgents that will me moved\n=========================")
+isWorthMove = False
+for site, endpoints in toBeMovedEndpoints.items():
+    if len(endpoints) > 0:
+        isWorthMove = True
+        print(f"{site}:" + ''.join([f'\n\t{name}' for name, id in endpoints]))
 
+if not isWorthMove:
+    print("No agent to move. If this behaviour is not expected, please edit the SITE_PATTERN_MATCHING patterns to include agents.")
+    exit()
+
+if (input("\n\nConfirm changes and move the agents in the console? (Yes/No): ").lower() == "yes"):
+    print("Moving agents...")
+    moveEndpoints(toBeMovedEndpoints)
+else:
+    print("Aborted; No endpoint was moved.")
 
 
 
