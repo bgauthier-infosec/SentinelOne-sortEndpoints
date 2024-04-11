@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import requests, json, re, os, dotenv, time
-from datetime import datetime
+import requests, json, re, os, dotenv
+from utils import output
 
 # Loading .env values
 dotenv.load_dotenv()
@@ -36,40 +36,6 @@ SITE_PATTERN_MATCHING = {
 }
 
 authHeaders = { 'Authorization': f'ApiToken {API_TOKEN}'}
-
-"""
-    Utilities
-"""
-def writeJsonToFile(text):
-    with open('debugOutput.json', 'w') as f:
-        f.write(json.dumps(json.loads(text), indent=2))
-
-def cleanupOldLogFiles():
-    path = os.path.join(os.getcwd(), "logs")
-    now = time.time()
-    for filename in os.listdir(path):
-        filestamp = os.stat(os.path.join(path, filename)).st_mtime
-        if filestamp < now - RETENTION_LOGS_DAYS * 86400:
-            output(filename)
-
-def writeToLogFile(text):
-    filename = f"{str(datetime.today().year)}-{str(datetime.today().month)}-{str(datetime.today().day)}.log"
-    with open(os.path.join("logs", filename), "a") as f:
-        f.write(f"{str(datetime.today().hour)}:{str(datetime.today().second)} {text}")
-    cleanupOldLogFiles()
-
-def output(text, doExit = False):
-    if ENV == "local":
-        print(text)
-    elif ENV == "prod":
-        writeToLogFile(text + "\n")
-    else:
-        print("FATAL ERROR: Unknown ENV variable. Please use local|prod values.")
-        writeToLogFile(f"FATAL ERROR: Unknown ENV variable. Please use local|prod values.")
-        exit()
-    if doExit:
-            exit()
-
 
 def moveEndpoints(toBeMovedEndpoints):
     for site, endpoints in toBeMovedEndpoints.items():
