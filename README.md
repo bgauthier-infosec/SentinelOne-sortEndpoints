@@ -10,10 +10,23 @@ Expected use case:
 ```bash
 python -m pip install -r requirements.txt
 ```
+## Generate a service account in SentinelOne for API requests
+### Create a dedicated role
+Best practise is to create a new role with minimal permissions.
+Here are the only two required permissions to sort endpoints with this script:
+- Endpoints > View
+- Endpoints > Move to another site
+
+### Create a dedicated service account
+The account must be generated as a Service account and not a Console account.
+Generate the account at the Account (not Site or Global) level with the dedicated role previously created.
+
 ## Prepare environment variables
 - Copy or rename .env.example into .env
 - Generate your API key in SentinelOne*
 - Update the API token and console URL in the .env file
+- Test the script locally with a the ENV variable set to "local"
+- Optional: deploy this script in an automated task (like cron on an Unix system). Please use "ENV=prod" to disable the prompt and generate log files
 
 *SentinelOne account must be a service account with admin rights on all sites you will interact with (source & destinations)
 
