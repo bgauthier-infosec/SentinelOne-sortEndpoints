@@ -28,11 +28,12 @@ SITE_PATTERN_MATCHING = {
     'Shared Services': ['(?i)^AZ.+'],
     'South Africa': ['(?i)^(C|S|V)ZA.+'],
     'Spain & Portugal': ['(?i)^(C|S|V|EU)?ES.+'],
-    'United Arabic Emirates': [],
+    'United Arabic Emirates': ['(?i)^(C|S|V)AE.+'],
     'United Kingdom': ['(?i)^(C|S|V)(GB|UK).+'],
     'Switzerland': ['(?i)^(C|S|V)CH.+', '(?i)^Condor.+'],
     'Default site': [],
-    'Camlog - Medentis': []
+    'Camlog - Medentis': [],
+    'ABC Dental (TEMP)': []
 }
 
 authHeaders = { 'Authorization': f'ApiToken {API_TOKEN}'}
