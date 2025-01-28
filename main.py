@@ -17,22 +17,21 @@ MOVE_SITE_URL = "/web/api/v2.1/agents/actions/move-to-site"
 # Please edit this object according to your needs
 SITE_PATTERN_MATCHING = {
     # Use '(?i)' at the beginning of the regex to disable case sensitiveness
-    'Austria': ['(?i)^(C|S|V)AT.+'],
-    'Benelux': ['(?i)^(C|S|V)(BE|NL).+'],
-    'Czech Republic': ['(?i)^(C|S|V)CZ.+'],
-    'France': ['(?i)^(C|S|V)FR.+', '(?i)^Julie.+'],
-    'Germany': ['(?i)^(C|S|V)DE.+'],
-    'Italy': ['(?i)^(C|S|V)IT.+'],
-    'Nordic': ['(?i)^(C|S|V)SE.+'],
-    'Poland': ['(?i)^(C|S|V)PL.+'],
+    'Austria': ['(?i)^(C|S|V)(D|P)?AT.+'],
+    'Benelux': ['(?i)^(C|S|V)(D|P)?(BE|NL).+'],
+    'Czech Republic': ['(?i)^(C|S|V)(D|P)?CZ.+'],
+    'France': ['(?i)^(C|S|V)(D|P)?FR.+', '(?i)^Julie.+'],
+    'Germany': ['(?i)^(C|S|V)(D|P)?DE.+'],
+    'Italy': ['(?i)^(C|S|V)(D|P)?IT.+'],
+    'Nordic': ['(?i)^(C|S|V)(D|P)?SE.+'],
+    'Poland': ['(?i)^(C|S|V)(D|P)?PL.+'],
     'Shared Services': ['(?i)^AZ.+'],
-    'South Africa': ['(?i)^(C|S|V)ZA.+'],
-    'Spain & Portugal': ['(?i)^(C|S|V|EU)?ES.+'],
-    'United Arabic Emirates': ['(?i)^(C|S|V)AE.+'],
-    'United Kingdom': ['(?i)^(C|S|V)(GB|UK).+'],
-    'Switzerland': ['(?i)^(C|S|V)CH.+', '(?i)^Condor.+'],
+    'South Africa': ['(?i)^(C|S|V)(D|P)?ZA.+'],
+    'Spain & Portugal': ['(?i)^(C|S|V|EU)(D|P)?ES.+'],
+    'United Arabic Emirates': ['(?i)^(C|S|V)(D|P)?AE.+'],
+    'United Kingdom': ['(?i)^(C|S|V)(D|P)?(GB|UK).+'],
+    'Switzerland': ['(?i)^(C|S|V)(D|P)?CH.+', '(?i)^Condor.+'],
     'Default site': [],
-    'Camlog - Medentis': [],
     'ABC Dental (TEMP)': []
 }
 
