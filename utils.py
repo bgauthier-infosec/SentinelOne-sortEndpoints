@@ -21,11 +21,11 @@ def cleanupOldLogFiles():
     for filename in os.listdir(path):
         filestamp = os.stat(os.path.join(path, filename)).st_mtime
         if filestamp < now - RETENTION_LOGS_DAYS * 86400:
-            output(filename)
+            os.remove(os.path.join(path, filename))
 
 def writeToLogFile(text):
     filename = f"{str(datetime.today().year)}-{str(datetime.today().month)}-{str(datetime.today().day)}.log"
-    with open(os.path.join("logs", filename), "a") as f:
+    with open(os.path.join("logs", filename), "w") as f:
         f.write(f"{str(datetime.today().hour)}:{str(datetime.today().second)} {text}")
     cleanupOldLogFiles()
 
@@ -39,4 +39,4 @@ def output(text, doExit = False):
         writeToLogFile(f"FATAL ERROR: Unknown ENV variable. Please use local|prod values.")
         exit()
     if doExit:
-            exit()
+        exit()
